@@ -161,3 +161,70 @@
 - 사이킷런 홈페이지의 예시 참조바람
 
     [Underfitting vs. Overfitting - scikit-learn 0.24.1 documentation](https://scikit-learn.org/stable/auto_examples/model_selection/plot_underfitting_overfitting.html#sphx-glr-auto-examples-model-selection-plot-underfitting-overfitting-py)
+    
+## 8. 편향-분산 트레이드 오프 (Bias - Variance Trade Off
+
+- 정의 : 머신러닝 모델로 예측한 값과 실제값은 편향 - 분산 트레이드 오프를 갖는다
+
+    즉, 편향이 높으면 분산은 낮아지고 (과소적합) 반대로 분산이 높으면 편향이 낮아진다 (과적합)
+
+- 편향 (Bias) : 예측 결과와 실제 결과의 근접성
+    - 정답과 얼마나 멀리 떨어져 있는가? (정답에 잘 맞출 수록 Low Bias)
+- 분산 (Variance) : 예측 결과의 변동성
+    - 탄착군이 얼마나 모여있는가? (흩어져 있지 않을 수록 Low Variance)
+
+        ![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/0ee3595b-8576-4054-a542-05f3e0b8447a/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/0ee3595b-8576-4054-a542-05f3e0b8447a/Untitled.png)
+
+        [http://scott.fortmann-roe.com/docs/BiasVariance.html](http://scott.fortmann-roe.com/docs/BiasVariance.html)
+
+- 아래 그래프는 Regression 계수의 차수에 따른(Degree1 : 1차, Degree15: 15차) 예측 곡선과(파란색) 실제 데이터 세트의 코사인 곡선(주황색)간의 관계를 나타냄
+- Degree1에서는 모델이 실제 데이터 세트를 모두 표현하고 있지 못함
+    - High Bias + Low Variance 모델이라 할 수 있음
+- Degree15에서는 모델이 실제 데이터 세트 모두를 표현하고는 있으나, 과하게 표현되어 있음 (=데이터 세트의 변동(=잡음)까지도 지나치게 반영함)
+    - Low Bias + High Variance 모델이라 할 수 있음
+
+    ![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/e2b0ed97-4e96-4040-9e21-a8c22ee88442/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/e2b0ed97-4e96-4040-9e21-a8c22ee88442/Untitled.png)
+
+- 편향이 너무 높으면 전체 오류가 높고, 분산이 너무 높아도 오류 값이 증가하며, 편향과 분산의 최적값에서 전체 오류가 가장 낮아지는 '골디락스'가 형성된다
+- 따라서 편향과 분산이 서로 트레이드오프를 이루면서 오류 (=Cost)값이 최대로 낮아지는 모델을 구축하는 것이 효율적인 머신러닝 예측 모델을 만드는 방법
+
+    ![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/6310164a-3b63-4974-8360-434a1f1f8fc8/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/6310164a-3b63-4974-8360-434a1f1f8fc8/Untitled.png)
+
+    [http://scott.fortmann-roe.com/docs/BiasVariance.html](http://scott.fortmann-roe.com/docs/BiasVariance.html)
+
+## 9. 규제 선형 모델의 개요
+
+- 편향을 조절하는 것 : 실제 값과 예측값의 차이를 최소화 (=RSS)
+- 분산을 조절하는 것 : 회귀 계수의 크기를 최소화(=Degree)
+- 비용 함수가 RSS만 고려할 경우 → 회귀 계수가 커짐 → 과적합 → 따라서 과적합을 방지하는(=회귀 계수 값이 커지지 않기위한) 방법이 서로 균형을 이뤄야 함
+- 규제 (Regularization)
+    - 회귀 계수의 크기를 제어해 과적합을 개선하는 것
+- 방식
+    - 비용 함수에 alpha 값으로 패널티를 부과하여 회귀 계수 값의 크기를 감소
+        - alpha값과 적합도의 Trade Off
+
+            → alpha = 0 (또는 매우 작은값)인 경우 :
+
+            $alpha  * ||W||_2^2$ = 0 (또는 작은 값) → 회귀 계수가 커짐 → 학습 데이터 적합도가 상승
+
+            → alpha = ∞ (또는 매우 큰값)인 경우 : 
+
+            $alpha  * ||W||_2^2$ = ∞ (또는 큰 값) →  회귀 계수가 작아짐 → 학습 데이터 과적합을 개선할 수 있음
+
+- 분류
+    - Cost Function에 항을 추가하는데, 이 형태에 따라 L1, L2 Regulation으로 분류함
+    - L1 방식 : Manhattan Distance 또는 Taxicab 표준이라고 부름 (λ = 1 일 때).
+        - L1 Norm은 공간에서 벡터 크기의 합
+        - 가중치의 절대값 합에 비례하여 가중치에 패널티를 주는 규제 유형
+        - 관련성이 없거나 매우 낮은 특성의 가중치를 0으로 유도하여 영향을 크게 미치는 핵심 Features만 반영하도록 함
+
+            $$비용 함수 목표 = Min(RSS(W) + \alpha  * ||W||_2 )$$
+
+    - L2 방식 : 유클리드 Norm (λ = 2 일 때)이라고 함 (가장 인기있는 Norm)
+        - 한 지점에서 다른 지점으로 이동할 수있는 최단 거리를 나타냄
+        - 가중치 제곱의 합에 비례하여 가중치에 패널티를 주는 규제 유형
+        - 아주 높거나 아주 낮은 이상치에 대해서 0에 가깝게 유도하는 데 도움이 됨
+
+            $$비용 함수 목표 = Min(RSS(W) + \alpha  * ||W||_2^2 )$$
+
+    [[Part Ⅲ. Neural Networks 최적화] 2. Regularization - 라온피플 머신러닝 아카데미 -](https://m.blog.naver.com/laonple/220527647084)
